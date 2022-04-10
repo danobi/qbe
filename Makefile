@@ -8,12 +8,14 @@ SRC      = main.c util.c parse.c cfg.c mem.c ssa.c alias.c load.c copy.c \
 AMD64SRC = amd64/targ.c amd64/sysv.c amd64/isel.c amd64/emit.c
 ARM64SRC = arm64/targ.c arm64/abi.c arm64/isel.c arm64/emit.c
 RV64SRC  = rv64/targ.c rv64/abi.c rv64/isel.c rv64/emit.c
-SRCALL   = $(SRC) $(AMD64SRC) $(ARM64SRC) $(RV64SRC)
+BPFSRC   = bpf/targ.c bpf/abi.c bpf/isel.c bpf/emit.c
+SRCALL   = $(SRC) $(AMD64SRC) $(ARM64SRC) $(RV64SRC) ($BPFSRC)
 
 AMD64OBJ = $(AMD64SRC:%.c=$(OBJDIR)/%.o)
 ARM64OBJ = $(ARM64SRC:%.c=$(OBJDIR)/%.o)
 RV64OBJ  = $(RV64SRC:%.c=$(OBJDIR)/%.o)
-OBJ      = $(SRC:%.c=$(OBJDIR)/%.o) $(AMD64OBJ) $(ARM64OBJ) $(RV64OBJ)
+BPFOBJ  =  $(BPFSRC:%.c=$(OBJDIR)/%.o)
+OBJ      = $(SRC:%.c=$(OBJDIR)/%.o) $(AMD64OBJ) $(ARM64OBJ) $(RV64OBJ) $(BPFOBJ)
 
 CFLAGS += -Wall -Wextra -std=c99 -g -pedantic
 
@@ -30,12 +32,14 @@ $(OBJDIR)/timestamp:
 	@mkdir -p $(OBJDIR)/amd64
 	@mkdir -p $(OBJDIR)/arm64
 	@mkdir -p $(OBJDIR)/rv64
+	@mkdir -p $(OBJDIR)/bpf
 	@touch $@
 
 $(OBJ): all.h ops.h
 $(AMD64OBJ): amd64/all.h
 $(ARM64OBJ): arm64/all.h
 $(RV64OBJ): rv64/all.h
+$(BPFOBJ): bpf/all.h
 $(OBJDIR)/main.o: config.h
 
 config.h:
