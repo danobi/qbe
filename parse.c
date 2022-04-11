@@ -171,6 +171,17 @@ lexinit()
 	done = 1;
 }
 
+static void
+destroytyp()
+{
+	unsigned int i;
+
+	for (i=0; i<ntyp; ++i)
+		if (typ[i].fields)
+			vfree(typ[i].fields);
+	vfree(typ);
+}
+
 static int64_t
 getint()
 {
@@ -1115,7 +1126,7 @@ parse(FILE *f, char *path, void data(Dat *), void func(Fn *))
 			parsetyp();
 			break;
 		case Teof:
-			vfree(typ);
+			destroytyp();
 			return;
 		}
 	}
