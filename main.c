@@ -185,6 +185,9 @@ main(int ac, char *av[])
 			}
 		}
 		parse(inf, f, data, func);
+
+		if (inf != stdin)
+			fclose(inf);
 	} while (++optind < ac);
 
 	if (!dbg) {
